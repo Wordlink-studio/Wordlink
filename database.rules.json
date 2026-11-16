@@ -1,0 +1,94 @@
+{
+  "rules": {
+    "rooms": {
+      "$roomCode": {
+        ".read": "auth !== null",
+        ".write": "auth !== null",
+        "settings": {
+          ".write": "auth !== null && newData.exists() && newData.hasChildren(['turnSeconds','maxPlayers','totalSeconds','rounds','allowOneShot','title'])"
+        },
+        "state": {
+          ".write": "auth !== null"
+        },
+        "players": {
+          "$uid": {
+            ".write": "auth !== null && (auth.uid === $uid || data.parent().child('hostId').val() === auth.uid)",
+            ".validate": "newData.hasChildren(['name','avatar']) && newData.child('name').isString() && newData.child('name').val().length >= 2 && newData.child('name').val().length <= 12"
+          }
+        },
+        "playerOrder": {
+          ".write": "auth !== null"
+        },
+        "currentPlayerId": {
+          ".write": "auth !== null"
+        },
+        "turnIndex": {
+          ".write": "auth !== null"
+        },
+        "turnStartedAt": {
+          ".write": "auth !== null"
+        },
+        "turnEndsAt": {
+          ".write": "auth !== null"
+        },
+        "lastSyllable": {
+          ".write": "auth !== null"
+        },
+        "mission": {
+          ".write": "auth !== null"
+        },
+        "usedWords": {
+          "$word": {
+            ".write": "auth !== null",
+            ".validate": "newData.val() === true && newData.val() !== null"
+          }
+        },
+        "words": {
+          ".write": "auth !== null",
+          "$idx": {
+            ".validate": "newData.hasChildren(['type','word','playerId','at']) && newData.child('type').isString() && newData.child('word').isString() && newData.child('playerId').isString() && newData.child('at').isNumber()"
+          }
+        },
+        "chat": {
+          "$idx": {
+            ".write": "auth !== null",
+            ".validate": "newData.hasChildren(['id','name','text','at']) && newData.child('text').isString() && newData.child('text').val().length <= 120 && newData.child('at').isNumber()"
+          }
+        },
+        "winnerId": {
+          ".write": "auth !== null"
+        },
+        "roundWins": {
+          "$uid": {
+            ".write": "auth !== null",
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          }
+        },
+        "summary": {
+          ".write": "auth !== null"
+        },
+        "hostId": {
+          ".write": "auth !== null"
+        },
+        "password": {
+          ".write": "auth !== null"
+        }
+      }
+    },
+    "profiles": {
+      "$uid": {
+        ".read": "auth !== null",
+        ".write": "auth !== null && auth.uid === $uid",
+        ".validate": "newData.hasChildren(['name','xp','games','wins','totalScore'])"
+      }
+    },
+    "lobby": {
+      "chat": {
+        "$idx": {
+          ".write": "auth !== null",
+          ".validate": "newData.hasChildren(['id','name','text','at']) && newData.child('text').isString() && newData.child('text').val().length <= 120 && newData.child('at').isNumber()"
+        }
+      }
+    }
+  }
+}
