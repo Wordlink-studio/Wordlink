@@ -1,0 +1,67 @@
+{
+  "rules": {
+    "rooms": {
+      ".read": "auth !== null",
+      "$roomCode": {
+        ".write": "auth !== null && (!data.exists() || data.child('hostId').val() === auth.uid)",
+        "settings": {
+          ".write": "auth !== null && data.parent().child('hostId').val() === auth.uid",
+          ".validate": "newData.hasChildren(['turnSeconds','maxPlayers','totalSeconds','rounds','allowOneShot'])"
+        },
+        "players": {
+          "$uid": {
+            ".write": "auth !== null && (auth.uid === $uid || data.parent().parent().child('hostId').val() === auth.uid)",
+            ".validate": "newData.hasChildren(['name','avatar']) && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 12"
+          }
+        },
+        "playerOrder": { ".write": "auth !== null" },
+        "state": { ".write": "auth !== null" },
+        "currentPlayerId": { ".write": "auth !== null" },
+        "turnIndex": { ".write": "auth !== null" },
+        "turnStartedAt": { ".write": "auth !== null" },
+        "turnEndsAt": { ".write": "auth !== null" },
+        "lastSyllable": { ".write": "auth !== null" },
+        "lastReaction": { ".write": "auth !== null" },
+        "mission": { ".write": "auth !== null" },
+        "usedWords": { "$word": { ".write": "auth !== null" } },
+        "words": {
+          ".write": "auth !== null",
+          "$idx": {
+            ".validate": "newData.hasChildren(['type','word','playerId','at']) && newData.child('word').isString() && newData.child('at').isNumber()"
+          }
+        },
+        "chat": {
+          "$idx": {
+            ".write": "auth !== null",
+            ".validate": "newData.hasChildren(['id','name','text','at']) && newData.child('text').isString() && newData.child('text').val().length <= 120 && newData.child('at').isNumber()"
+          }
+        },
+        "winnerId": { ".write": "auth !== null" },
+        "roundWins": { "$uid": { ".write": "auth !== null", ".validate": "newData.isNumber() && newData.val() >= 0" } },
+        "summary": { ".write": "auth !== null" }
+      }
+    },
+    "profiles": {
+      ".read": "auth !== null",
+      "$uid": {
+        ".write": "auth !== null && auth.uid === $uid",
+        ".validate": "newData.hasChildren(['name','xp','games','wins','totalScore'])"
+      }
+    },
+    "lobby": {
+      ".read": "auth !== null",
+      "chat": {
+        "$idx": {
+          ".write": "auth !== null",
+          ".validate": "newData.hasChildren(['id','name','text','at']) && newData.child('text').isString() && newData.child('text').val().length <= 120 && newData.child('at').isNumber()"
+        }
+      },
+      "presence": {
+        "$uid": {
+          ".write": "auth !== null && auth.uid === $uid",
+          ".validate": "newData.hasChildren(['name'])"
+        }
+      }
+    }
+  }
+}
