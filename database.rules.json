@@ -1,0 +1,55 @@
+{
+  "rules": {
+    "rooms": {
+      ".read": "auth !== null",
+      "$roomCode": {
+        ".write": "auth !== null && (!data.exists() || data.child('hostId').val() === auth.uid)",
+        "hostId": {
+          ".write": "auth !== null && (data.val() === auth.uid || (root.child('rooms').child($roomCode).child('players').child(auth.uid).exists() && root.child('rooms').child($roomCode).child('players').child(data.val()).child('online').val() === false))"
+        },
+        "players": {
+          "$uid": {
+            ".write": "auth !== null && (auth.uid === $uid || data.parent().parent().child('hostId').val() === auth.uid)",
+            ".validate": "newData.hasChildren(['name','avatar']) && newData.child('name').isString() && newData.child('name').val().length >= 1 && newData.child('name').val().length <= 12"
+          }
+        },
+        "playerOrder": { ".write": "auth !== null" },
+        "submits": {
+          "$uid": {
+            ".write": "auth !== null && auth.uid === $uid",
+            ".validate": "newData.hasChildren(['nonce','word']) && newData.child('word').isString() && newData.child('word').val().length <= 24"
+          }
+        },
+        "lastReaction": { ".write": "auth !== null" },
+        "chat": {
+          "$idx": {
+            ".write": "auth !== null",
+            ".validate": "newData.hasChildren(['id','name','text','at']) && newData.child('text').isString() && newData.child('text').val().length <= 120 && newData.child('at').isNumber()"
+          }
+        }
+      }
+    },
+    "profiles": {
+      ".read": "auth !== null",
+      "$uid": {
+        ".write": "auth !== null && auth.uid === $uid",
+        ".validate": "newData.hasChildren(['name','xp','games','wins','totalScore'])"
+      }
+    },
+    "lobby": {
+      ".read": "auth !== null",
+      "chat": {
+        "$idx": {
+          ".write": "auth !== null",
+          ".validate": "newData.hasChildren(['id','name','text','at']) && newData.child('text').isString() && newData.child('text').val().length <= 120 && newData.child('at').isNumber()"
+        }
+      },
+      "presence": {
+        "$uid": {
+          ".write": "auth !== null && auth.uid === $uid",
+          ".validate": "newData.hasChildren(['name'])"
+        }
+      }
+    }
+  }
+}
